@@ -3,7 +3,9 @@ package compressor
 import (
 	"bufio"
 	comparator "compressionTool/comparator"
+	priorityQueue "compressionTool/priorityQueue"
 	types "compressionTool/types"
+	"container/heap"
 	"io"
 )
 
@@ -26,5 +28,27 @@ func Compressor(file io.Reader) ([]types.CharFrequency, error) {
 		})
 	}
 	comparator.Comparator(sortedChar)
+	pq := &priorityQueue.PriorityQueue{}
+	heap.Init(pq)
+	for _, charFreq := range sortedChar {
+		node := &types.CharFrequency{
+			Char:      charFreq.Char,
+			Frequency: charFreq.Frequency,
+		}
+		heap.Push(pq, node)
+	}
+
+	for pq.Len() > 1 {
+		left := heap.Pop(pq).(*types.HuffmanNode)
+		right := heap.Pop(pq).(*types.HuffmanNode)
+
+		newNode := &types.HuffmanNode{
+			Frequency: left.Frequency + right.Frequency,
+			Left:      left,
+			Right:     right,
+		}
+		heap.Push(pq, newNode)
+	}
+	// root := heap.Pop(pq).(*types.HuffmanNode)
 	return sortedChar, nil
 }
