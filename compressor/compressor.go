@@ -4,12 +4,15 @@ import (
 	"bufio"
 	comparator "compressionTool/comparator"
 	priorityQueue "compressionTool/priorityQueue"
+	"compressionTool/traversal"
 	types "compressionTool/types"
 	"container/heap"
 	"io"
 )
 
-func Compressor(file io.Reader) ([]types.CharFrequency, error) {
+// func Compressor(file io.Reader) ([]types.CharFrequency, error) {
+
+func Compressor(file io.Reader) (map[string]string, error) {
 	frequencyMap := make(map[string]int)
 	input := bufio.NewScanner(file)
 	input.Split(bufio.ScanRunes)
@@ -49,6 +52,11 @@ func Compressor(file io.Reader) ([]types.CharFrequency, error) {
 		}
 		heap.Push(pq, newNode)
 	}
-	// root := heap.Pop(pq).(*types.HuffmanNode)
-	return sortedChar, nil
+	root := heap.Pop(pq).(*types.HuffmanNode)
+	codes := make(map[string]string)
+	traversal.GenerateCode(root, "", codes)
+
+	return codes, nil
+
+	// return sortedChar, nil
 }

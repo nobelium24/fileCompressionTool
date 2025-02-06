@@ -1,7 +1,7 @@
 package main
 
 import (
-	compressor "compressionTool/compressor"
+	"compressionTool/compressor"
 	"fmt"
 	"io"
 	"os"
@@ -27,7 +27,11 @@ func main() {
 		fmt.Printf("An error occurred: %v", err)
 		return
 	}
-	for _, freq := range charMap {
-		fmt.Printf("%s appears %d times in %s\n", freq.Char, freq.Frequency, fileName)
+	// for _, freq := range charMap {
+	// 	fmt.Printf("%s appears %d times in %s\n", freq., freq.Frequency, fileName)
+	// }
+	for key, value := range charMap {
+		fmt.Printf("Key Value\n")
+		fmt.Printf("%s, %s\n", key, value)
 	}
 }
