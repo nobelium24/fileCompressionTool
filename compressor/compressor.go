@@ -8,11 +8,12 @@ import (
 	types "compressionTool/types"
 	"container/heap"
 	"io"
+	"os"
 )
 
 // func Compressor(file io.Reader) ([]types.CharFrequency, error) {
 
-func Compressor(file io.Reader) (map[string]string, error) {
+func Compressor(file io.ReadSeeker) (map[string]string, error) {
 	frequencyMap := make(map[string]int)
 	input := bufio.NewScanner(file)
 	input.Split(bufio.ScanRunes)
@@ -34,7 +35,7 @@ func Compressor(file io.Reader) (map[string]string, error) {
 	pq := &priorityQueue.PriorityQueue{}
 	heap.Init(pq)
 	for _, charFreq := range sortedChar {
-		node := &types.CharFrequency{
+		node := &types.HuffmanNode{
 			Char:      charFreq.Char,
 			Frequency: charFreq.Frequency,
 		}
@@ -55,6 +56,29 @@ func Compressor(file io.Reader) (map[string]string, error) {
 	root := heap.Pop(pq).(*types.HuffmanNode)
 	codes := make(map[string]string)
 	traversal.GenerateCode(root, "", codes)
+
+	file.Seek(0, io.SeekStart) // Reset the input reader to the beginning
+	var encodedText string
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanRunes)
+	for scanner.Scan() {
+		char := scanner.Text()
+		encodedText += codes[char]
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	// Write the encoded text to an output file
+	outputFile, err := os.Create("encoded_output.txt")
+	if err != nil {
+		return nil, err
+	}
+	defer outputFile.Close()
+	_, err = outputFile.WriteString(encodedText)
+	if err != nil {
+		return nil, err
+	}
 
 	return codes, nil
 

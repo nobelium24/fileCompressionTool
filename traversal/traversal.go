@@ -5,6 +5,9 @@ import (
 )
 
 func GenerateCode(node *types.HuffmanNode, code string, codes map[string]string) {
+	if node == nil {
+		return
+	}
 	if node.Left == nil && node.Right == nil {
 		codes[node.Char] = code
 	}

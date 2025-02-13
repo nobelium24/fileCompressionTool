@@ -3,7 +3,6 @@ package main
 import (
 	"compressionTool/compressor"
 	"fmt"
-	"io"
 	"os"
 )
 
@@ -13,7 +12,7 @@ func main() {
 		return
 	}
 
-	var input io.Reader
+	// var input io.Reader
 	fileName := os.Args[1]
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -21,8 +20,8 @@ func main() {
 		return
 	}
 	defer file.Close()
-	input = file
-	charMap, err := compressor.Compressor(input)
+	// input = file
+	charMap, err := compressor.Compressor(file)
 	if err != nil {
 		fmt.Printf("An error occurred: %v", err)
 		return
